@@ -10,6 +10,10 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 
+```sh
+pip3 install -r requirements.txt
+```
+
 ### License
 
 This project is licensed under the MIT License. See [LICENSE](https://github.com/wedkarz02/io-lab/blob/main/LICENSE) file for more info.
