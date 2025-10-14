@@ -56,3 +56,8 @@ if __name__ == "__main__":
         else:
             print(f"{fn.__name__} result: neutral")
 
+# c) Trudno porównać czas mojego pisania:
+# - niespecjalnie zwracałem uwagi na czas,
+# - chwilę zajęło setupowanie środowiska, instalowanie LSP itd.
+# - typowe siedzenie i myślenie "a jakby to zrobić lepiej" zamiast napisać to co jest proste i działa
+
