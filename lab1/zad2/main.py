@@ -33,7 +33,6 @@ def rysuj_trajektorie(v0, h, kat_stopnie):
     plt.ylim(0, max(y_values) * 1.1)
     plt.tight_layout()
     plt.savefig('trajektoria.png', dpi=150)
-    plt.show()
 
 if __name__ == "__main__":
     v0 = 50
