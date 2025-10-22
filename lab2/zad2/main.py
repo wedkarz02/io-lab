@@ -49,7 +49,7 @@ def plot_2d(df_pca):
     plt.ylabel("PC2")
     plt.title("PCA – wizualizacja danych Iris w 2D")
     plt.legend()
-    plt.show()
+    plt.savefig("./pca_fig.png")
 
 
 def plot_3d(df_pca):
@@ -62,7 +62,7 @@ def plot_3d(df_pca):
     ax.set_zlabel("PC3")
     ax.set_title("PCA – wizualizacja danych Iris w 3D")
     plt.legend()
-    plt.show()
+    plt.savefig("./pca_fig.png")
 
 
 def main():
