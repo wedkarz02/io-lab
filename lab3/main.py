@@ -3,6 +3,8 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import GaussianNB
 import matplotlib.pyplot as plt
 
 
@@ -60,7 +62,7 @@ class Zad2:
             rounded=True,
             fontsize=10,
         )
-        plt.title("Drzewo decyzyjne dla Iris", fontsize=20)
+        plt.title("decision tree", fontsize=20)
         plt.savefig("decision_tree.png", bbox_inches="tight")
 
         y_pred = clf.predict(x_test)
@@ -68,8 +70,39 @@ class Zad2:
         print(f"acc: {acc}")
 
         cm = confusion_matrix(y_test, y_pred, labels=clf.classes_)
-        print("\nMacierz błędów:")
+        print("\nconfusion matrix:")
         print(pd.DataFrame(cm, index=clf.classes_, columns=clf.classes_))
+
+
+class Zad3:
+    @staticmethod
+    def main():
+        x_train, x_test, y_train, y_test = split_dataset("data/iris_big.csv", 12345)
+        classifiers = {
+            "3-NN": KNeighborsClassifier(n_neighbors=3),
+            "5-NN": KNeighborsClassifier(n_neighbors=5),
+            "11-NN": KNeighborsClassifier(n_neighbors=11),
+            "Naive Bayes": GaussianNB(),
+        }
+
+        results = {}
+
+        for name, clf in classifiers.items():
+            print(f"\n--- {name} ---")
+            clf.fit(x_train, y_train)
+            y_pred = clf.predict(x_test)
+            accuracy = accuracy_score(y_test, y_pred)
+            results[name] = accuracy
+            cm = confusion_matrix(y_test, y_pred, labels=clf.classes_)
+
+            print(f"acc: {accuracy:.4f} ({accuracy*100:.2f}%)")
+            print("confusion matrix:")
+            print(pd.DataFrame(cm, index=clf.classes_, columns=clf.classes_))
+
+        print("\n")
+        sorted_results = sorted(results.items(), key=lambda x: x[1], reverse=True)
+        for i, (name, accuracy) in enumerate(sorted_results, 1):
+            print(f"{i}. {name}: {accuracy:.4f} ({accuracy*100:.2f}%)")
 
 
 if __name__ == "__main__":
@@ -78,5 +111,7 @@ if __name__ == "__main__":
             Zad1.main()
         case "2":
             Zad2.main()
+        case "3":
+            Zad3.main()
         case _:
             print("invalid arg")
