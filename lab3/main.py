@@ -13,11 +13,11 @@ def split_dataset(file_name):
 
 def classify_iris(row):
     # sl, sw, pl, pw = row
-    _, _, pl, _ = row
+    _, _, pl, pw = row
 
-    if in_range(pl, 1.2, 1.8):
+    if pl < 4:
         return "setosa"
-    elif in_range(pl, 4.1, 4.9):
+    elif pw < 1:
         return "virginica"
     else:
         return "versicolor"
