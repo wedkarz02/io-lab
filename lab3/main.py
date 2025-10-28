@@ -1,10 +1,16 @@
+import sys
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.metrics import accuracy_score, confusion_matrix
+import matplotlib.pyplot as plt
 
 
-def split_dataset(file_name):
+def split_dataset(file_name, seed):
     df = pd.read_csv(file_name)
-    return train_test_split(df.values, train_size=0.7, random_state=288568)
+    X = df.iloc[:, :4].values
+    y = df.iloc[:, 4].values
+    return train_test_split(X, y, train_size=0.7, random_state=seed, stratify=y)
 
 
 class Zad1:
@@ -22,20 +28,55 @@ class Zad1:
 
     @staticmethod
     def main():
-        _, test_set = split_dataset("data/iris_big.csv")
+        _, test_x, _, test_y = split_dataset("data/iris_big.csv", 288568)
 
-        length = len(test_set)
+        length = len(test_y)
         good_pred = 0
 
         for i in range(length):
-            if Zad1.classify_iris(test_set[i][:4]) == test_set[i][4]:
+            if Zad1.classify_iris(test_x[i]) == test_y[i]:
                 good_pred += 1
 
         print(good_pred)
         print(good_pred / length * 100, "%")
 
 
+class Zad2:
+    @staticmethod
+    def main():
+        x_train, x_test, y_train, y_test = split_dataset("data/iris_big.csv", 69420)
+
+        clf = DecisionTreeClassifier(random_state=42)
+        clf.fit(x_train, y_train)
+
+        feature_names = ["sepal_length", "sepal_width", "petal_length", "petal_width"]
+
+        plt.figure(figsize=(30, 20), dpi=300)
+        plot_tree(
+            clf,
+            filled=True,
+            feature_names=feature_names,
+            class_names=clf.classes_,
+            rounded=True,
+            fontsize=10,
+        )
+        plt.title("Drzewo decyzyjne dla Iris", fontsize=20)
+        plt.savefig("decision_tree.png", bbox_inches="tight")
+
+        y_pred = clf.predict(x_test)
+        acc = accuracy_score(y_test, y_pred)
+        print(f"acc: {acc}")
+
+        cm = confusion_matrix(y_test, y_pred, labels=clf.classes_)
+        print("\nMacierz błędów:")
+        print(pd.DataFrame(cm, index=clf.classes_, columns=clf.classes_))
+
+
 if __name__ == "__main__":
-    # df = pd.read_csv("data/iris_big.csv")
-    # print(df.groupby("target_name").sample(10))
-    Zad1().main()
+    match sys.argv[1]:
+        case "1":
+            Zad1.main()
+        case "2":
+            Zad2.main()
+        case _:
+            print("invalid arg")
