@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
@@ -8,10 +9,11 @@ from keras.models import Sequential
 from keras.layers import Dense
 from keras.utils import plot_model
 
-# Load the iris dataset
-iris = load_iris()
-X = iris.data
-y = iris.target
+df = pd.read_csv("data/iris_big.csv")
+
+# Separate features and target
+X = df.iloc[:, :-1].values  # All columns except the last one as features
+y = df.iloc[:, -1].values  # Last column as target
 
 # Preprocess the data
 # Scale the features
