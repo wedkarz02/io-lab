@@ -68,10 +68,12 @@ plt.legend()
 
 plt.tight_layout()
 # plt.show()
-plt.savefig("plot.png")
+plt.savefig("iris/plot.png")
 
 # Save the model
-model.save("iris_model.h5")
+model.save("iris/iris_model.h5")
 
 # Plot and save the model architecture
-plot_model(model, to_file="model_plot.png", show_shapes=True, show_layer_names=True)
+plot_model(
+    model, to_file="iris/model_plot.png", show_shapes=True, show_layer_names=True
+)

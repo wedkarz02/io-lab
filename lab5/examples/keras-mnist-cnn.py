@@ -65,7 +65,7 @@ sns.heatmap(cm, annot=True, fmt="d", cmap="Blues")
 plt.xlabel("Predicted")
 plt.ylabel("True")
 plt.title("Confusion Matrix")
-plt.savefig("mnist-conf-matrix.png")
+plt.savefig("mnist/conf-matrix.png")
 
 # Plotting training and validation accuracy
 plt.figure(figsize=(10, 5))
@@ -87,7 +87,7 @@ plt.grid(True, linestyle="--", color="grey")
 plt.legend()
 
 plt.tight_layout()
-plt.savefig("mnist-loss.png")
+plt.savefig("mnist/loss.png")
 
 # Display 25 images from the test set with their predicted labels
 plt.figure(figsize=(10, 10))
@@ -98,4 +98,4 @@ for i in range(25):
     plt.grid(False)
     plt.imshow(test_images[i].reshape(28, 28), cmap=plt.cm.binary)
     plt.xlabel(predicted_labels[i])
-plt.savefig("mnist-predictions.png")
+plt.savefig("mnist/predictions.png")
