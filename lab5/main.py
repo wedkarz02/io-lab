@@ -47,12 +47,10 @@ print(f"Zbiór treningowy: {len(train_df)}")
 print(f"Zbiór walidacyjny: {len(val_df)}")
 print(f"Zbiór testowy: {len(test_df)}")
 
-# Parametry - ZREDUKOWANE dla szybszego treningu
+# Parametry
 IMG_SIZE = (150, 150)
 BATCH_SIZE = 32
-EPOCHS = 5  # Zmniejszone z 30 do 10
-STEPS_PER_EPOCH = 100  # Zmniejszone z ~500 do 100
-VALIDATION_STEPS = 50  # Zmniejszone dla walidacji
+EPOCHS = 50
 
 # Augmentacja danych dla zbioru treningowego
 train_datagen = ImageDataGenerator(
@@ -101,7 +99,7 @@ test_generator = val_test_datagen.flow_from_dataframe(
 )
 
 
-# Budowa modelu CNN - uproszczona dla szybszego treningu
+# Budowa modelu CNN
 def create_model_v1():
     model = keras.Sequential(
         [
@@ -112,10 +110,11 @@ def create_model_v1():
             layers.MaxPooling2D(2, 2),
             layers.Conv2D(128, (3, 3), activation="relu"),
             layers.MaxPooling2D(2, 2),
+            layers.Conv2D(128, (3, 3), activation="relu"),
+            layers.MaxPooling2D(2, 2),
             # Warstwy gęste
             layers.Flatten(),
-            layers.Dense(256, activation="relu"),  # Zmniejszone z 512
-            layers.Dropout(0.5),
+            layers.Dense(512, activation="relu"),
             layers.Dense(1, activation="sigmoid"),
         ]
     )
@@ -130,21 +129,14 @@ model_v1 = create_model_v1()
 model_v1.summary()
 
 # Callbacks
-early_stop = EarlyStopping(
-    monitor="val_loss", patience=3, restore_best_weights=True
-)  # Zmniejszone patience
-reduce_lr = ReduceLROnPlateau(
-    monitor="val_loss", factor=0.2, patience=2, min_lr=0.0001
-)  # Zmniejszone patience
+early_stop = EarlyStopping(monitor="val_loss", patience=5, restore_best_weights=True)
+reduce_lr = ReduceLROnPlateau(monitor="val_loss", factor=0.2, patience=3, min_lr=0.0001)
 
-print("Rozpoczynanie treningu Model V1...")
-# Trening modelu ze zmniejszoną liczbą kroków
+# Trening modelu
 history_v1 = model_v1.fit(
     train_generator,
-    steps_per_epoch=STEPS_PER_EPOCH,  # Użycie zmniejszonej liczby kroków
     epochs=EPOCHS,
     validation_data=val_generator,
-    validation_steps=VALIDATION_STEPS,  # Użycie zmniejszonej liczby kroków walidacji
     callbacks=[early_stop, reduce_lr],
     verbose=1,
 )
@@ -171,138 +163,14 @@ def plot_training_history(history):
     ax2.legend()
 
     plt.tight_layout()
-    plt.savefig("training_hist.png")
+    plt.savefig("dvc/training_hist.png")
 
 
 # Wizualizacja krzywej uczenia
 plot_training_history(history_v1)
 
-# SZYBSZE MODELE DO PORÓWNANIA
 
-
-# Model V2 - Zoptymalizowany dla szybkiego treningu
-def create_model_v2():
-    model = keras.Sequential(
-        [
-            layers.Conv2D(32, (3, 3), activation="relu", input_shape=(150, 150, 3)),
-            layers.BatchNormalization(),
-            layers.MaxPooling2D(2, 2),
-            layers.Dropout(0.25),
-            layers.Conv2D(64, (3, 3), activation="relu"),
-            layers.BatchNormalization(),
-            layers.MaxPooling2D(2, 2),
-            layers.Dropout(0.25),
-            layers.Conv2D(128, (3, 3), activation="relu"),
-            layers.BatchNormalization(),
-            layers.MaxPooling2D(2, 2),
-            layers.Dropout(0.25),
-            layers.GlobalAveragePooling2D(),  # Szybsze niż Flatten + Dense
-            layers.Dense(128, activation="relu"),
-            layers.Dropout(0.5),
-            layers.Dense(1, activation="sigmoid"),
-        ]
-    )
-
-    model.compile(
-        optimizer=keras.optimizers.Adam(learning_rate=0.001),
-        loss="binary_crossentropy",
-        metrics=["accuracy"],
-    )
-
-    return model
-
-
-print("Rozpoczynanie treningu Model V2...")
-model_v2 = create_model_v2()
-history_v2 = model_v2.fit(
-    train_generator,
-    steps_per_epoch=STEPS_PER_EPOCH,
-    epochs=EPOCHS,
-    validation_data=val_generator,
-    validation_steps=VALIDATION_STEPS,
-    callbacks=[early_stop, reduce_lr],
-    verbose=1,
-)
-
-
-# Model V3 - Bardziej zwarta architektura
-def create_model_v3():
-    model = keras.Sequential(
-        [
-            layers.Conv2D(16, (3, 3), activation="relu", input_shape=(150, 150, 3)),
-            layers.MaxPooling2D(2, 2),
-            layers.Conv2D(32, (3, 3), activation="relu"),
-            layers.MaxPooling2D(2, 2),
-            layers.Conv2D(64, (3, 3), activation="relu"),
-            layers.MaxPooling2D(2, 2),
-            layers.Flatten(),
-            layers.Dense(128, activation="relu"),
-            layers.Dropout(0.3),
-            layers.Dense(1, activation="sigmoid"),
-        ]
-    )
-
-    model.compile(
-        optimizer=keras.optimizers.RMSprop(learning_rate=0.0001),
-        loss="binary_crossentropy",
-        metrics=["accuracy"],
-    )
-
-    return model
-
-
-print("Rozpoczynanie treningu Model V3...")
-model_v3 = create_model_v3()
-history_v3 = model_v3.fit(
-    train_generator,
-    steps_per_epoch=STEPS_PER_EPOCH,
-    epochs=EPOCHS,
-    validation_data=val_generator,
-    validation_steps=VALIDATION_STEPS,
-    callbacks=[early_stop, reduce_lr],
-    verbose=1,
-)
-
-
-# SZYBKIE PORÓWNANIE MODELI
-def compare_models(histories, model_names):
-    plt.figure(figsize=(15, 5))
-
-    # Porównanie dokładności
-    plt.subplot(1, 2, 1)
-    for history, name in zip(histories, model_names):
-        plt.plot(history.history["val_accuracy"], label=name)
-    plt.title("Validation Accuracy Comparison")
-    plt.xlabel("Epoch")
-    plt.ylabel("Accuracy")
-    plt.legend()
-
-    # Porównanie straty
-    plt.subplot(1, 2, 2)
-    for history, name in zip(histories, model_names):
-        plt.plot(history.history["val_loss"], label=name)
-    plt.title("Validation Loss Comparison")
-    plt.xlabel("Epoch")
-    plt.ylabel("Loss")
-    plt.legend()
-
-    plt.tight_layout()
-    plt.savefig("acc-loss-comp.png")
-
-
-# Ocena wszystkich modeli
-models = [model_v1, model_v2, model_v3]
-model_names = ["Model V1 (Basic)", "Model V2 (Optimized)", "Model V3 (Compact)"]
-histories = [history_v1, history_v2, history_v3]
-
-compare_models(histories, model_names)
-
-# SZYBKA OCENA NAJLEPSZEGO MODELU
-best_model_idx = np.argmax([max(h.history["val_accuracy"]) for h in histories])
-best_model = models[best_model_idx]
-best_model_name = model_names[best_model_idx]
-
-print(f"NAJLEPSZY MODEL: {best_model_name}")
+best_model = model_v1
 
 # Ocena najlepszego modelu na zbiorze testowym (też z ograniczonymi krokami dla szybkości)
 test_loss, test_accuracy = best_model.evaluate(test_generator, steps=50)
@@ -324,18 +192,13 @@ sns.heatmap(
     xticklabels=["Cat", "Dog"],
     yticklabels=["Cat", "Dog"],
 )
-plt.title(f"Confusion Matrix - {best_model_name}")
+plt.title(f"Confusion Matrix")
 plt.xlabel("Predicted")
 plt.ylabel("Actual")
-plt.savefig("conf_matrix.png")
+plt.savefig("dvc/conf_matrix.png")
 
 print(
     classification_report(
         y_true_sample, y_pred_classes_best, target_names=["Cat", "Dog"]
     )
 )
-
-print("\nTRENING ZAKOŃCZONY! Czas treningu znacząco skrócony:")
-print(f"- Epoki: {EPOCHS} (zamiast 30)")
-print(f"- Kroki na epokę: {STEPS_PER_EPOCH} (zamiast ~500)")
-print(f"- Łącznie: {EPOCHS * STEPS_PER_EPOCH} kroków treningowych")
