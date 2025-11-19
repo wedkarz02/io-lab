@@ -23,8 +23,12 @@ def bird_counter(image_path):
 
 
 folder_path = "./bird_miniatures/"
+counter = 0
 for filename in os.listdir(folder_path):
     if filename.lower().endswith(".jpg"):
         image_path = os.path.join(folder_path, filename)
         bird_count = bird_counter(image_path)
         print(f"{filename}: {bird_count}")
+        counter += bird_count
+
+print(f"total: {counter}")
