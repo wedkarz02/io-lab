@@ -1,0 +1,10 @@
+Parametry: x=0.0998, y=0.0870, z=0.9973, u=0.9956, v=0.7356, w=0.0013
+Najlepsza wytrzymałość: 2.837272
+
+Uruchomienie 2:
+Parametry: x=0.5791, y=0.5475, z=0.9917, u=0.9986, v=0.2932, w=0.0980
+Najlepsza wytrzymałość: 2.835787
+
+Uruchomienie 3:
+Parametry: x=0.4392, y=0.4238, z=0.9970, u=0.9982, v=0.0609, w=0.0112
+Najlepsza wytrzymałość: 2.838864

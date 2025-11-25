@@ -176,4 +176,7 @@ poetry.toml
 *.jpg
 *.csv
 *.h5
+*.mp4
+
+pip_cache/
 

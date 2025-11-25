@@ -1,0 +1,2 @@
+  Łącznie detekcji: 1449
+  Statystyki klas: {'laptop': 180, 'person': 187, 'bowl': 252, 'potted plant': 269, 'couch': 176, 'bottle': 143, 'cup': 68, 'donut': 9, 'cell phone': 35, 'vase': 35, 'chair': 3, 'tv': 41, 'clock': 49, 'teddy bear': 2}

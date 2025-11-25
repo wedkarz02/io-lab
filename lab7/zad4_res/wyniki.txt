@@ -1,0 +1,12 @@
+Średni czas wykonania: 0.26 sekund
+Znalezione rozwiązania: 10/10
+Uruchomienie 1: 0.19 sekund
+Uruchomienie 2: 0.23 sekund
+Uruchomienie 3: 0.37 sekund
+Uruchomienie 4: 0.36 sekund
+Uruchomienie 5: 0.20 sekund
+Uruchomienie 6: 0.29 sekund
+Uruchomienie 7: 0.31 sekund
+Uruchomienie 8: 0.20 sekund
+Uruchomienie 9: 0.21 sekund
+Uruchomienie 10: 0.25 sekund
